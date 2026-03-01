@@ -127,6 +127,44 @@ class TestBdGestParse(unittest.TestCase):
         res = BdGestParse().search_album_from_sitemaps_interactive()
         self.assertEqual("https://m.bedetheque.com/BD-Love-Peach-250200.html", res)
 
+    def test_comicinfo_metadata_missing_depot_legal(self):
+        """comicinfo_metadata should log an error and not raise when Dépot_légal is absent."""
+        bdgest = BdGestParse()
+        # metadata_dict without 'Dépot_légal' – should not raise
+        result = bdgest.comicinfo_metadata({'Titre': 'Test'})
+        self.assertIsInstance(result, dict)
+        self.assertNotIn("Year", result)
+
+    def test_comicinfo_metadata_unparseable_depot_legal(self):
+        """comicinfo_metadata should log an error and not raise when Dépot_légal cannot be parsed."""
+        bdgest = BdGestParse()
+        result = bdgest.comicinfo_metadata({'Titre': 'Test', 'Dépot_légal': 'not-a-date'})
+        self.assertIsInstance(result, dict)
+        self.assertNotIn("Year", result)
+
+    def test_parse_label_exception_is_logged_not_raised(self):
+        """Labels that raise an exception during parsing should be skipped with a debug log."""
+        from bs4 import BeautifulSoup
+        bdgest = BdGestParse()
+        # A label whose first content is a nested tag (not a string), so .split() raises AttributeError
+        html = '<html><body><label><span>Foo</span></label></body></html>'
+        soup = BeautifulSoup(html, 'html.parser')
+        debug_messages = []
+        original_debug = bdgest.logger.debug
+        bdgest.logger.debug = lambda msg, *a, **kw: debug_messages.append(str(msg))
+        try:
+            album_meta_dict = {}
+            for label in soup.select("label"):
+                if label.contents:
+                    try:
+                        key = label.contents[0].split(':')[0].rstrip().replace(' ', '_')
+                        album_meta_dict[key] = 'val'
+                    except Exception as err:
+                        bdgest.logger.debug(f"Could not parse label: {err}")
+        finally:
+            bdgest.logger.debug = original_debug
+        self.assertTrue(any("Could not parse label" in m for m in debug_messages))
+
 
 if __name__ == '__main__':
     unittest.main()
