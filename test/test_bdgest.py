@@ -54,6 +54,19 @@ class TestBdGestParse(unittest.TestCase):
                           'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
         self.assertEqual(expected_string, first_line)
 
+    def test_concatenate_sitemaps_files_after_clean_sitemaps_urls(self):
+        """Regression test: concatenate_sitemaps_files() must not return a cached path to a
+        deleted temp file after clean_sitemaps_urls() has removed it."""
+        instance = BdGestParse()
+        instance.clean_sitemaps_urls()  # deletes the temp file internally
+
+        # Must succeed and produce a readable file (not raise FileNotFoundError)
+        tempfile_path = instance.concatenate_sitemaps_files()
+        with open(tempfile_path, 'r') as f:
+            first_line = f.readline()
+
+        self.assertTrue(first_line.startswith('<?xml'))
+
     def test_clean_sitemaps_urls(self):
         cleaned_list, urls_list = BdGestParse().clean_sitemaps_urls()
         self.assertEqual('mimura kataguri days of days of mimura kataguri', cleaned_list[0])
