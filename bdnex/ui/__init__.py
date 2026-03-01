@@ -70,9 +70,9 @@ def main():
         for file in files:
             try:
                 add_metadata_from_bdgest(file)
-            except:
+            except Exception as e:
                 logger = logging.getLogger(__name__)
-                logger.error(f"{file} couldn't be processed")
+                logger.exception(f"{file} couldn't be processed: {e}")
 
     elif vargs.input_file:
         file = vargs.input_file
