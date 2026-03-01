@@ -10,12 +10,12 @@ import tempfile
 import urllib.request
 
 import yaml
-from pkg_resources import resource_filename
 
 from bdnex.lib.colargulog import ColorizedArgsFormatter
 
-LOGGING_CONF = resource_filename('bdnex', "/conf/logging.conf")
-DEFAULT_CONFIG_YAML = resource_filename('bdnex', "/conf/bdnex.yaml")
+_CONF_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'conf')
+LOGGING_CONF = os.path.join(_CONF_DIR, 'logging.conf')
+DEFAULT_CONFIG_YAML = os.path.join(_CONF_DIR, 'bdnex.yaml')
 UNIX_DIR_VAR = 'XDG_CONFIG_HOME'
 UNIX_DIR_FALLBACK = '~/.config'
 
@@ -165,6 +165,10 @@ def args():
     logging.info('Logging now setup.')
 
     vargs = parser.parse_args()
+
+    if not vargs.init and not vargs.input_file and not vargs.input_dir:
+        parser.print_help()
+        sys.exit(0)
 
     if 'vargs.input_file' in locals():
         if not os.path.exists(vargs.input_file):
