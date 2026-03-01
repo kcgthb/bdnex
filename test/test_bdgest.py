@@ -39,7 +39,23 @@ class TestBdGestParse(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
-    def test_generate_sitemaps_url(self):
+    @patch('bdnex.lib.bdgest.requests.get')
+    def test_generate_sitemaps_url(self, mock_get):
+        mock_content = (
+            b'<?xml version="1.0" encoding="UTF-8"?>'
+            b'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        )
+        for i in range(10):
+            val_min = i * 10000 + 1
+            val_max = val_min + 9999
+            mock_content += (
+                f'<sitemap><loc>https://www.bedetheque.com/albums_{val_min}_{val_max}_map.xml</loc></sitemap>'
+            ).encode()
+        mock_content += b'</sitemapindex>'
+        mock_response = MagicMock()
+        mock_response.content = mock_content
+        mock_get.return_value = mock_response
+
         urls = BdGestParse().generate_sitemaps_url()
         self.assertEqual('https://www.bedetheque.com/albums_50001_60000_map.xml', urls[5])
 

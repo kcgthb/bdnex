@@ -5,6 +5,7 @@ import shutil
 import tempfile
 import time
 import urllib
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from functools import lru_cache
 from os import listdir
@@ -65,19 +66,23 @@ class BdGestParse:
     @staticmethod
     def generate_sitemaps_url():
         """
-        Generate a list of sitemaps urls. Each url points to a sub sitemap file
-        Returns: urls(list) : list of individual url of sitemap files
-
+        Fetch sitemap URLs dynamically from the bedetheque.com sitemap index.
+        This avoids hardcoding the number of sitemaps, allowing the list to
+        adapt automatically as bedetheque.com adds more albums or restructures.
+        Returns: urls(list) : list of individual sitemap file URLs
         """
-        urls = []
-        last_val = 0
-        for i in range(47):
-            val_min = 1 + last_val
-            val_max = val_min + 9999
-            last_val = val_max
-            url = "https://www.bedetheque.com/albums_{val_min}_{val_max}_map.xml".format(val_min=val_min,
-                                                                                         val_max=val_max)
-            urls.append(url)
+        sitemap_index_url = "https://www.bedetheque.com/sitemap.xml"
+        try:
+            response = requests.get(sitemap_index_url, allow_redirects=True)
+            response.raise_for_status()
+            tree = ET.fromstring(response.content)
+        except requests.RequestException as err:
+            raise RuntimeError(f"Failed to fetch sitemap index from {sitemap_index_url}: {err}") from err
+        except ET.ParseError as err:
+            raise RuntimeError(f"Failed to parse sitemap index XML from {sitemap_index_url}: {err}") from err
+        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+        urls = [loc.text for loc in tree.findall('.//sm:loc', ns)
+                if loc.text and '_map.xml' in loc.text]
         return urls
 
     def download_sitemaps(self):
