@@ -1,3 +1,4 @@
+import importlib.resources
 import logging
 import os
 import re
@@ -17,14 +18,13 @@ import pandas as pd
 import requests
 from InquirerPy import prompt
 from bs4 import BeautifulSoup
-from pkg_resources import resource_filename
 from rapidfuzz import fuzz
 from termcolor import colored
 
 from bdnex.lib.utils import dump_json, load_json, bdnex_config
 
-BDGEST_MAPPING = resource_filename('bdnex', "conf/bdgest_mapping.json")
-BDGEST_SITEMAPS = resource_filename('bdnex', "conf/bedetheque_sitemap.json")
+BDGEST_MAPPING = str(importlib.resources.files('bdnex.conf').joinpath('bdgest_mapping.json'))
+BDGEST_SITEMAPS = str(importlib.resources.files('bdnex.conf').joinpath('bedetheque_sitemap.json'))
 
 
 class BdGestParse:
