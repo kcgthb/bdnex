@@ -47,14 +47,7 @@ def front_cover_similarity(original, image_to_compare):
     image_to_compare_cv = imutils.resize(image_to_compare_cv, height=600)
 
     # Check for similarities between the 2 images
-    try:
-        sift = cv2.xfeatures2d.SIFT_create()
-    except AttributeError:
-        logger.error(
-            "SIFT is not available. Install opencv-contrib-python: "
-            "pip install opencv-contrib-python"
-        )
-        return 0
+    sift = cv2.xfeatures2d.SIFT_create()
     kp_1, desc_1 = sift.detectAndCompute(original_cv, None)
     kp_2, desc_2 = sift.detectAndCompute(image_to_compare_cv, None)
 

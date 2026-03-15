@@ -1,8 +1,5 @@
 import os
 import unittest
-from unittest.mock import patch
-
-import cv2
 
 from bdnex.lib.cover import front_cover_similarity
 
@@ -22,13 +19,6 @@ class TestCover(unittest.TestCase):
         # check bad cover similarity
         match_res = front_cover_similarity(ARCHIVE_COVER, BDGEST_OTHER_COVER)
         self.assertEqual(True, match_res < 5)
-
-
-    def test_front_cover_similarity_sift_unavailable(self):
-        # When SIFT is not available (cv2.xfeatures2d missing), should return 0 gracefully
-        with patch.object(cv2, 'xfeatures2d', new=object()):
-            match_res = front_cover_similarity(ARCHIVE_COVER, BDGEST_COVER)
-            self.assertEqual(0, match_res)
 
 
 if __name__ == '__main__':
