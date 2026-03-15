@@ -65,6 +65,43 @@ pip install -e .[dev]
 ```
 
 
+## Testing
+
+The project uses Python's unittest framework for testing. All tests are located in the `test/` directory.
+
+### Running Tests
+
+To run all tests:
+```bash
+python -m unittest discover test/ -v
+```
+
+To run a specific test module:
+```bash
+python -m unittest test.test_bdgest -v
+python -m unittest test.test_utils -v
+python -m unittest test.test_cover -v
+python -m unittest test.test_archive_tools -v
+python -m unittest test.test_comicrack -v
+python -m unittest test.test_colargulog -v
+```
+
+To run a specific test class or method:
+```bash
+python -m unittest test.test_bdgest.TestBdGestParse -v
+python -m unittest test.test_bdgest.TestBdGestParse.test_generate_sitemaps_url -v
+```
+
+### Test Coverage
+
+The test suite covers the following modules:
+- `bdgest.py`: Album and series metadata parsing from bedetheque.com
+- `utils.py`: Configuration and utility functions
+- `cover.py`: Cover image similarity matching
+- `archive_tools.py`: CBZ/CBR archive handling
+- `comicrack.py`: ComicInfo.xml creation and archive manipulation
+- `colargulog.py`: Colored logging formatters
+
 ## Examples:
 
 ```
