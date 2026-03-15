@@ -1,5 +1,5 @@
-![BDneX](https://github.com/lbesnard/bdnex/actions/workflows/test.yml/badge.svg)
-[![codecov](https://codecov.io/gh/lbesnard/bdnex/branch/main/graph/badge.svg?token=V9WJWRCTK5)](https://codecov.io/gh/lbesnard/bdnex)
+![BDneX](https://github.com/kcgthb/bdnex/actions/workflows/test.yml/badge.svg)
+[![codecov](https://codecov.io/gh/kcgthb/bdnex/branch/main/graph/badge.svg?token=V9WJWRCTK5)](https://codecov.io/gh/kcgthb/bdnex)
 
 BDneX french comics tagger and library manager (POF at this stage)
 
