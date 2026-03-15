@@ -56,6 +56,7 @@ setup(
         'pyyaml',
         'rapidfuzz',
         'rarfile',
+        'requests',
         'tenacity',
         'termcolor',
         'thefuzz',
