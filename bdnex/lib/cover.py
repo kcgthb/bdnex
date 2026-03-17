@@ -5,15 +5,16 @@ import cv2
 import imutils
 from termcolor import colored
 
-from bdnex.lib.utils import download_link
+from bdnex.lib.utils import download_link, bdnex_config
 
 
 def get_bdgest_cover(cover_url):
     logger = logging.getLogger(__name__)
 
     cover_name = os.path.basename(cover_url)
-    os.path.join(os.environ["HOME"], '.local/share/bdnex/bedetheque/')
-    covers_local_path = os.path.join(os.environ["HOME"], '.local/share/bdnex/bedetheque/covers')
+    bdnex_conf = bdnex_config()
+    share_path = os.path.expanduser(bdnex_conf['bdnex']['share_path'])
+    covers_local_path = os.path.join(share_path, 'bedetheque/covers')
     cover_local_path = os.path.join(covers_local_path, cover_name)
 
     if os.path.exists(cover_local_path):
