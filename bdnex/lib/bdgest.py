@@ -270,7 +270,7 @@ class BdGestParse:
             url = urllib.request.urlopen(self.album_url)
             try:
                 content = url.read().decode('utf8')
-            except:
+            except AttributeError:
                 content = url.read()  # mainly for unittesting as content already decoded
 
             # save html content in .local for future re-parse if needed. reprocess can be achieved without
@@ -304,11 +304,11 @@ class BdGestParse:
                     if key == 'Série':
                         try:
                             series_href = label.find_parent().find_all(href=True)[0].get('href')  # get series link
-                        except:
-                            pass
+                        except (IndexError, AttributeError):
+                            self.logger.debug("Could not find series href for label")
                     album_meta_dict[key] = val
-                except:
-                    pass
+                except Exception as err:
+                    self.logger.debug(f"Could not parse label: {err}")
 
         cover_url = soup.find_all('img', alt=True)[1].attrs['src']
         album_meta_dict['cover_url'] = cover_url
@@ -321,7 +321,7 @@ class BdGestParse:
         for key in album_meta_dict.keys():
             try:
                 album_meta_dict[key] = album_meta_dict[key].strip('\n').rstrip().lstrip()
-            except:
+            except AttributeError:
                 pass
 
         if isinstance(album_meta_dict['Planches'], str):
@@ -415,7 +415,7 @@ class BdGestParse:
             url = urllib.request.urlopen(serie_url)
             try:
                 content = url.read().decode('utf8')
-            except:
+            except AttributeError:
                 content = url.read()  # mainly for unittesting as content already decoded
 
             # save html content in .local for future re-parse if needed. reprocess can be achieved without
@@ -447,8 +447,8 @@ class BdGestParse:
                 published_date = datetime.strptime(metadata_dict['Dépot_légal'], '(Parution le %d/%m/%Y)')
             except Exception as err2:
                 self.logger.error('{published_date}'.format(published_date=metadata_dict['Dépot_légal']))
-        except:
-            self.logger.error('{published_date}'.format(published_date=metadata_dict['Dépot_légal']))
+        except Exception as err:
+            self.logger.error(f"Unexpected error parsing date '{metadata_dict.get('Dépot_légal', '')}': {err}")
 
         if "published_date" in locals():
             comicrack_dict["Year"] = published_date.year
