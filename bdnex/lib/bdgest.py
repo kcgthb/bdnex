@@ -90,7 +90,6 @@ class BdGestParse:
 
             open(os.path.join(self.sitemaps_path, os.path.basename(url)), 'wb').write(r.content)
 
-    @lru_cache()
     def concatenate_sitemaps_files(self):
         self.logger.debug("Merging sitemaps")
 
